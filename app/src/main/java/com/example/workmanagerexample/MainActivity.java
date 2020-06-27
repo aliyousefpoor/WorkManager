@@ -2,6 +2,8 @@ package com.example.workmanagerexample;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,16 +27,18 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(MainActivity.this,WorkManager.class);
+                Log.d(TAG, "onClick: ");
                 StartWorker();
+                Toast.makeText(getApplicationContext(), "Started", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     static void StartWorker() {
         Log.d(TAG, "StartWorker: ");
-        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(MyWorkManager.class, 3, TimeUnit.SECONDS).build();
-        WorkManager.getInstance().enqueueUniquePeriodicWork("aaa", ExistingPeriodicWorkPolicy.REPLACE,periodicWorkRequest);
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWorkManager.class)
+                .setInitialDelay(5, TimeUnit.SECONDS).build();
+        WorkManager.getInstance().enqueueUniqueWork("aaa", ExistingWorkPolicy.APPEND, oneTimeWorkRequest);
 
     }
 }
