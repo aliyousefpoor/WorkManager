@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class MyWorkManager extends Worker {
-    private int count = 0, savedCount = 0;
+    private int count = 0;
     private static final String TAG = "MyWorkManager";
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
 
@@ -40,12 +40,12 @@ public class MyWorkManager extends Worker {
         //Toast.makeText(getApplicationContext(), "Salam", Toast.LENGTH_LONG).show();
 
         Log.d(TAG, "doWork: ");
+        savedata();
         createNotification();
 
         OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWorkManager.class)
                 .setInitialDelay(5, TimeUnit.SECONDS).build();
         WorkManager.getInstance().enqueueUniqueWork("aaa", ExistingWorkPolicy.APPEND, oneTimeWorkRequest);
-
 
 
         return Result.success();
@@ -93,5 +93,11 @@ public class MyWorkManager extends Worker {
         }
     }
 
-
+    public void savedata(){
+        final SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("counter", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        count = sharedPreferences.getInt("counter", count);
+        count=count+4;
+        editor.putInt("counter", count).commit();
+    }
 }
